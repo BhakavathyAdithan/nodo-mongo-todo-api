@@ -13,27 +13,27 @@ MongoClient.connect('mongodb://localhost:27017',(err,client)=>{
 
     //deleteOne
 
-    // db.collection('Todos').deleteOne({text:'Book train tickets'}).then((result)=>{
-    //     console.log(result);
-    // },(err)=>{
-    //     console.log('Unable to Delete Todos',err);
-    // })
+    db.collection('Todos').deleteOne({text:'Book train tickets'}).then((result)=>{
+        console.log(result);
+    },(err)=>{
+        console.log('Unable to Delete Todos',err);
+    });
 
     //deleteMany
 
-    // db.collection('Todos').deleteMany({text:'Book train tickets'}).then((result)=>{
+    db.collection('Todos').deleteMany({text:'Book train tickets'}).then((result)=>{
 
-    //     console.log(result);
-    // },(err)=>{
-    //     console.log('Unable to Delete Todos',err);
-    // })
+        console.log(result);
+    },(err)=>{
+        console.log('Unable to Delete Todos',err);
+    });
 
     //findOneAndDelete
     db.collection('Todos').findOneAndDelete({text:'Book train tickets'}).then((result)=>{
         console.log(result);
     },(err)=>{
         console.log('Unable to Delete Todos',err);
-    })
+    });
 
 
     client.close();
