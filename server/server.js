@@ -10,8 +10,8 @@ var app=express();
 //Middleware for Body Parser
 app.use(bodyParser.json());
 
+//POST Route
 app.post('/todos',(req,res)=>{
-//console.log(req.body);
 var todo=new Todo({
     text: req.body.text
 });
@@ -23,6 +23,18 @@ todo.save().then((todo)=>{
 });
 });
 
+//GET Route
+app.get('/todos',(req,res)=>{
+
+    Todo.find().then((todos)=>{
+        res.status(200).send({todos});
+    },(err)=>{
+        res.status(400).send(err);
+    });
+
+});
+
+//Server Start-Up
 app.listen(3000,()=>{
     console.log('Connected to Server @ Port number 3000 !');
 });
