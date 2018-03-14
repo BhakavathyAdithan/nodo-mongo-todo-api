@@ -5,6 +5,9 @@ const {ObjectID}=require('mongodb');
 var {mongoose}=require('./db/mongoose');
 var {Todo}=require('./models/todo');
 
+//Configure port for Heroku Deployment & Local Deployment
+const port=process.env.PORT || 3000
+
 //Express Initialization
 var app=express();
 
@@ -63,8 +66,8 @@ Todo.findById(id).then((todo)=>{
 });
 
 //Server Start-Up
-app.listen(3000,()=>{
-    console.log('Connected to Server @ Port number 3000 !');
+app.listen(port,()=>{
+    console.log(`Connected to Server @ Port number ${port} !`);
 });
 
 module.exports={app};
