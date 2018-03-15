@@ -1,3 +1,4 @@
+require('./config/config');
 const express=require('express');
 const bodyParser=require('body-parser');
 const {ObjectID}=require('mongodb');
@@ -7,7 +8,7 @@ var {mongoose}=require('./db/mongoose');
 var {Todo}=require('./models/todo');
 
 //Configure port for Heroku Deployment & Local Deployment
-const port=process.env.PORT || 3000
+const port=process.env.PORT;
 
 //Express Initialization
 var app=express();
