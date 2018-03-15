@@ -38,7 +38,7 @@ app.get('/todos',(req,res)=>{
 
 });
 
-//GET By Id
+//GET By Id Route
 
 app.get('/todos/:id',(req,res)=>{
 
@@ -60,10 +60,38 @@ Todo.findById(id).then((todo)=>{
     return res.status(400).send();
 }).catch((e)=>{
     res.status(400).send();
-})
+});
 
 
 });
+
+
+//DELETE By Id Route
+
+app.delete('/todos/:id',(req,res)=>{
+
+    var id= req.params.id;
+    
+    if(!ObjectID.isValid(id))
+    {
+       return res.status(404).send();
+    }
+    
+    Todo.findByIdAndRemove(id).then((todo)=>{
+        
+        if(!todo)
+        {
+            return res.status(404).send();
+        }
+        return res.status(200).send({todo});
+    },(err)=>{
+        return res.status(400).send();
+    }).catch((e)=>{
+        res.status(400).send();
+    });
+    
+    
+    });
 
 //Server Start-Up
 app.listen(port,()=>{
