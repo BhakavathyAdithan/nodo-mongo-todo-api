@@ -11,7 +11,9 @@ const todos=[{
 },
 {
     _id: new ObjectID(),
-    text:'Second todo for the day'
+    text:'Second todo for the day',
+    completed:true,
+    completedAt:333
 }];
 
 beforeEach((done)=>{
@@ -165,3 +167,43 @@ describe('DELETE /todos/:id',()=>{
     });
 
 });
+
+describe('PATCH /todos/:id',()=>{
+
+    it('should update the todo',(done)=>{
+
+        var hexId=todos[0]._id.toHexString();
+
+        request(app)
+        .patch(`/todos/${hexId}`)
+        .send({"text":"Propose Love","completed":true})
+        .expect(200)
+        .expect((res)=>{
+            expect(res.body.todo.text).not.toBe(todos[0].text);
+            expect(res.body.todo.completed).toEqual(true);
+            expect(typeof res.body.todo.completedAt).toBe('number');
+        })
+        .end(done);
+
+    });
+
+    it('should clear completedAt when it\'s not completed',(done)=>{
+
+        var hexId=todos[1]._id.toHexString();
+
+        request(app)
+        .patch(`/todos/${hexId}`)
+        .send({"text":"Accept Love","completed":false})
+        .expect(200)
+        .expect((res)=>{
+            expect(res.body.todo.text).not.toBe(todos[1].text);
+            expect(res.body.todo.completed).toEqual(false);
+            expect(res.body.todo.completedAt).toBeNull();
+        })
+        .end(done);
+
+    });
+
+
+});
+
