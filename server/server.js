@@ -6,6 +6,8 @@ const _=require('lodash');
 
 var {mongoose}=require('./db/mongoose');
 var {Todo}=require('./models/todo');
+var {User}=require('./models/user');
+var {authenticate}=require('./middleware/authenticate');
 
 //Configure port for Heroku Deployment & Local Deployment
 const port=process.env.PORT;
@@ -127,7 +129,42 @@ app.delete('/todos/:id',(req,res)=>{
         }).catch((e)=>{
             res.status(400).send();
         })
-    })
+    });
+
+
+
+
+//POST Route - User's Model- Sign-Up
+app.post('/users',(req,res)=>{
+    var body=_.pick(req.body,['email','password']);
+    var user=new User(body);
+    user.save().then(()=>{
+        //res.status(200).send({user});
+        return user.generateAuthToken();
+    },(err)=>{
+        res.status(400).send(err);
+    }).then((token)=>{
+        res.header('x-auth',token).send(user);
+    });
+});
+
+//GET Route - User's Model Token Verification
+app.get('/users/me',authenticate, (req,res)=>{
+    
+    res.send(req.user);
+
+    // var token=req.header('x-auth');
+    // User.findByToken(token).then((user)=>{
+    //     if(!user)
+    //     {
+    //         return Promise.reject();
+    //     }
+    //     res.status(200).send(user);
+    // }).catch((e)=>{
+    //     res.status(401).send();
+    // });
+});
+    
 
 //Server Start-Up
 app.listen(port,()=>{
