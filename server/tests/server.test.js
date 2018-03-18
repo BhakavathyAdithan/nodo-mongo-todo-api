@@ -160,7 +160,7 @@ describe('DELETE /todos/:id',()=>{
         .end(done);
     });
 
-});
+ });
 
 describe('PATCH /todos/:id',()=>{
 
@@ -184,10 +184,9 @@ describe('PATCH /todos/:id',()=>{
     it('should clear completedAt when it\'s not completed',(done)=>{
 
         var hexId=todos[1]._id.toHexString();
-
         request(app)
         .patch(`/todos/${hexId}`)
-        .send({"text":"Accept Love","completed":false})
+        .send({text:"Accept Love",completed:false})
         .expect(200)
         .expect((res)=>{
             expect(res.body.todo.text).not.toBe(todos[1].text);

@@ -78,7 +78,8 @@ app.delete('/todos/:id',(req,res)=>{
     
     if(!ObjectID.isValid(id))
     {
-       return res.status(404).send();
+        console.log('Not valid object Id');
+        return res.status(404).send();
     }
     
     Todo.findByIdAndRemove(id).then((todo)=>{
@@ -88,8 +89,6 @@ app.delete('/todos/:id',(req,res)=>{
             return res.status(404).send();
         }
         return res.status(200).send({todo});
-    },(err)=>{
-        return res.status(400).send();
     }).catch((e)=>{
         res.status(400).send();
     });
@@ -145,7 +144,7 @@ app.post('/users',(req,res)=>{
         res.status(400).send(err);
     }).then((token)=>{
         res.header('x-auth',token).send(user);
-    });
+    }).catch((e)=>res.status(400).send());
 });
 
 //POST - User Login
