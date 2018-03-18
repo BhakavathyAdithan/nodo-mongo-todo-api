@@ -4,10 +4,10 @@ const bodyParser=require('body-parser');
 const {ObjectID}=require('mongodb');
 const _=require('lodash');
 
-var {mongoose}=require('./db/mongoose');
-var {Todo}=require('./models/todo');
-var {User}=require('./models/user');
-var {authenticate}=require('./middleware/authenticate');
+const {mongoose}=require('./db/mongoose');
+const {Todo}=require('./models/todo');
+const {User}=require('./models/user');
+const {authenticate}=require('./middleware/authenticate');
 
 //Configure port for Heroku Deployment & Local Deployment
 const port=process.env.PORT;
@@ -151,7 +151,7 @@ app.post('/users',(req,res)=>{
 //GET Route - User's Model Token Verification
 app.get('/users/me',authenticate, (req,res)=>{
     
-    res.send(req.user);
+   res.send(req.user);
 
     // var token=req.header('x-auth');
     // User.findByToken(token).then((user)=>{

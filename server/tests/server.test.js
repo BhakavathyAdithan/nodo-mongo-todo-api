@@ -1,25 +1,23 @@
 const request=require('supertest');
 const expect = require('expect');
 const {ObjectID}=require('mongodb');
+const mongoose=require('mongoose');
 
 const {app}=require('./../server');
 const {Todo}=require('./../models/todo');
+const {User}=require('./../models/user');
+const {todos,populateTodos,users,populateUsers}=require('./seed/seed');
 
-const todos=[{
-    _id: new ObjectID(),
-    text:'First todo for the day'
-},
-{
-    _id: new ObjectID(),
-    text:'Second todo for the day',
-    completed:true,
-    completedAt:333
-}];
+beforeEach(populateUsers);
+beforeEach(populateTodos);
 
-beforeEach((done)=>{
-    Todo.remove({}).then(()=>{
-        Todo.insertMany(todos);
-        done();
+describe('Delay to Resolve Promise',()=>{
+
+    it(' creates a delay to make testcases work',(done)=>{
+        setTimeout(()=>{
+            done();
+        },1000);
+        
     });
 });
 
@@ -27,7 +25,6 @@ describe('POST /todos',()=>{
 
     it('should create a new todo',(done)=>{
         var text='Run Test from Mocha';
-
         request(app)
         .post('/todos')
         .send({text})
@@ -47,7 +44,7 @@ describe('POST /todos',()=>{
                 expect(todos[0].text).toBe(text);
                 done();
             }).catch((e)=>done(e));
-        })
+        });
 
     });
 
@@ -57,9 +54,6 @@ describe('POST /todos',()=>{
         .post('/todos')
         .send({})
         .expect(400)
-        .expect((res)=>{
-
-        })
         .end((err,res)=>{
 
             if(err)
@@ -87,7 +81,7 @@ describe('GET /todos',()=>{
             expect(res.body.todos.length).toBe(2);
         })
         .end(done);
-    })
+    });
 
 });
 
@@ -146,7 +140,7 @@ describe('DELETE /todos/:id',()=>{
                 done();
             }).catch((e)=>{
                 done(e);
-            })
+            });
         });
     });
 
@@ -207,3 +201,75 @@ describe('PATCH /todos/:id',()=>{
 
 });
 
+describe('GET /users/me',()=>{
+
+    it('should return a user when authenticated',(done)=>{
+
+        request(app)
+        .get('/users/me')
+        .set('x-auth',users[0].tokens[0].token)
+        .expect(200)
+        .expect((res)=>{
+            expect(res.body._id).toBe(users[0]._id.toHexString());
+            expect(res.body.email).toBe(users[0].email);
+        })
+        .end(done);
+    });
+
+    it('should return 401 if not authenticated',(done)=>{
+
+        request(app)
+        .get('/users/me')
+        .expect(401)
+        .expect((res)=>{
+            expect(res.body).toEqual({});
+        })
+        .end(done);
+    });
+
+})
+
+describe('POST /users',()=>{
+
+    it('should create an user',(done)=>{
+
+        var email='adithan2013@hotmail.com';
+        var password='abc123%';
+
+        request(app)
+        .post('/users')
+        .send({email,password})
+        .expect(200)
+        .expect((res)=>{
+            expect(res.body._id).toBeTruthy();
+            expect(res.body.email).toBe(email);
+            expect(res.headers['x-auth']).toBeTruthy();
+        })
+        .end((err)=>{
+
+            if(err)
+            {
+                return done(err);
+            }
+
+            User.findOne({email}).then((user)=>{
+
+                expect(user).toBeTruthy();
+                expect(user.password).not.toBe(password);
+                done();
+            }).catch(()=>done(e));
+
+        });
+    });
+
+    it('should return validation errors if request invalid',(done)=>{
+
+        request(app)
+        .post('/users')
+        .send({email:'and',password:123})
+        .expect(400)
+        .end(done);
+        
+    });
+
+});
